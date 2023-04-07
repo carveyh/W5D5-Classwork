@@ -20,8 +20,11 @@ def harrison_ford
   #
   # Find the id and title of all movies in which Harrison Ford appeared but not
   # as a lead actor.
-      Movie.select(:id, :title).join(:actors).where()
-
+      Movie.joins(:actors)
+        .where('actors.name = ? AND castings.ord != ?', "Harrison Ford", "1")
+        # .where('actors.name = ?', "Harrison Ford")
+        # .where("castings.ord != 1")
+        .select(:id, :title)
 end
 
 def biggest_cast
@@ -38,6 +41,18 @@ def biggest_cast
   #
   # Find the id and title of the 3 movies with the largest casts (i.e., most
   # actors).
+
+
+  ############# Why we get only #<Movie::ActiveRecord_Relation:0x1c20> and not a array collection
+
+  ############# This works:
+  Movie.joins(:castings).group('movies.id').order('COUNT(actor_id) DESC').limit(3).select(:id, :title)
+
+  ############# Not sure why this doesn't work:
+  #It seems #group only has access to the starting model's table's columns,
+  #whereas #order has access to fully joined table's columns
+  # Movie.joins(:castings).group('movies.title').order('COUNT(actor_id) DESC').limit(3).select(:id, :title)
+  # Movie.joins(:castings).group('movies.id').order('COUNT(actor_id) DESC').limit(3).pluck('COUNT(actor_id) DESC')
   
 end
 
@@ -55,6 +70,8 @@ def directed_by_one_of(them)
   # Find the id and title of all the movies directed by one of 'them'.
   
   # Note: Directors appear in the 'actors' table.
+
+  # Movie.joins(:director).where(director_id: them)
 
 end
 

@@ -3,3 +3,5 @@ rails db:drop
 rails db:create
 rails db:migrate
 rails db:seed
+
+#rails db:setup will do all except drop
