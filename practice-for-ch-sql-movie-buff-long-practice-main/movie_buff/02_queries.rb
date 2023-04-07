@@ -21,7 +21,7 @@ def cast_list(title)
 
   Actor.select(:id, :name)
     .joins(:movies)
-    .where(movies: {title: title})
+    .where('movies.title = ?', title)
     .order(:ord)
   
   #how to do this with sanitizing?
@@ -32,7 +32,8 @@ def vanity_projects
   # starring actor. Show the movie id, title, and director's name.
 
   # Note: Directors appear in the 'actors' table.
-  
+  Movie.joins(:castings).joins(:director).where('movies.director_id = castings.actors_id AND castings.ord = 1')
+    .select('movies.id, movies.title, actors.name')
 end
 
 def most_supportive
